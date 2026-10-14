@@ -29,6 +29,7 @@ def demo():
     r = c.post("/predict?lang=hi", data=RICE)
     assert r.status_code == 200 and b"result-card" in r.data, "TTS failure must still show the crop"
     assert b"<audio id=\"result-audio\"" not in r.data, "no audio player when TTS failed"
+    assert b"replayAudio()" in r.data, "listen button falls back to browser speech"
 
     # unit conversion used by the paper (oxide basis -> element)
     assert abs(app.convert_input_value("Phosphorus", 100, "p2o5") - 43.64) < 1e-9
