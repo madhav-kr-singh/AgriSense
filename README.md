@@ -80,8 +80,8 @@ Ensure you have **Python 3.10+** installed on your system.
 
 ### 2. Clone Repository & Setup Environment
 ```bash
-git clone https://github.com/madhav-kr-singh/Crop-Recommendation-System.git
-cd "Crop-Recommendation-System"
+git clone https://github.com/madhav-kr-singh/AgriSense.git
+cd AgriSense
 ```
 
 ### 3. Create Virtual Environment
