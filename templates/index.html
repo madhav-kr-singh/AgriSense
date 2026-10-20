@@ -1241,7 +1241,6 @@
         </audio>
         {% endif %}
         <div class="result-card__actions">
-          {% if audio_file %}
           <button class="btn-speak" onclick="replayAudio()" type="button">
             <svg class="icon-speak" viewBox="0 0 24 24" aria-hidden="true">
               <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" />
@@ -1250,7 +1249,6 @@
             </svg>
             {{ t("btn_speak_again", lang) }}
           </button>
-          {% endif %}
           <button class="btn-speak" onclick="window.location.href='/?lang={{ lang }}'" type="button">
             <svg class="icon-speak" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
               stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
@@ -1270,11 +1268,21 @@
     const audio = document.getElementById('result-audio');
     const resultCard = document.querySelector('.result-card');
     if (resultCard) { resultCard.scrollIntoView({ behavior: 'smooth', block: 'center' }); }
-    if (audio) { window.addEventListener('load', () => audio.play().catch(() => { })); }
-    function replayAudio() {
-      if (!audio) return;
-      audio.pause(); audio.currentTime = 0; audio.play();
+    // ponytail: no server clip (edge-tts failed) -> browser speechSynthesis; quality depends on installed voices
+    function speakInBrowser() {
+      if (!resultCard || !('speechSynthesis' in window)) return;
+      const text = resultCard.querySelector('.result-card__label').textContent.replace(':', '') + ' ' +
+        resultCard.querySelector('.result-card__crop').textContent;
+      const u = new SpeechSynthesisUtterance(text);
+      u.lang = {{ (lang ~ '-IN')|tojson }};
+      speechSynthesis.cancel(); speechSynthesis.speak(u);
     }
+    function replayAudio() {
+      if (!audio) return speakInBrowser();
+      audio.pause(); audio.currentTime = 0;
+      audio.play().catch(speakInBrowser);
+    }
+    if (resultCard) { window.addEventListener('load', () => audio ? audio.play().catch(() => { }) : speakInBrowser()); }
 
     // ponytail: interactive stepper handler
     function stepInput(btn, dir) {
