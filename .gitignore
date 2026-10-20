@@ -46,3 +46,6 @@ htmlcov/
 Thumbs.db
 desktop.ini
 
+
+# Unused scaler artifact (app uses minmaxscaler.pkl)
+standscaler.pkl
